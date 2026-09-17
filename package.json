@@ -1,0 +1,22 @@
+{
+  "name": "ggsoma-reseller-bot",
+  "version": "2.0.0",
+  "description": "Telegram reseller bot on top of GGSoma Partner API — bilingual (AR/EN), pluggable payment gateways, atomic wallet.",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20.0.0" },
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "node --watch src/app.js",
+    "test": "node --import ./tests/_env.js --test tests/*.test.js",
+    "check": "node scripts/check-consistency.js",
+    "smoke": "node scripts/smoke-import.js",
+    "lint": "node --check src/app.js && npm run smoke && npm run check"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.4",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "grammy": "^1.30.0"
+  }
+}
