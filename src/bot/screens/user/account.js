@@ -37,6 +37,7 @@ screen('profile', async (ctx) => {
     .text(t(ctx, 'profile.btnOrders'), to('orders', '1')).text(t(ctx, 'profile.btnTier'), to('tier')).row()
     .text(t(ctx, 'profile.btnLedger'), to('ledger', '1')).text(t(ctx, 'profile.btnWithdraw'), to('wd_new')).row()
     .text(t(ctx, 'profile.btnWdProfile'), to('wd_profile')).text(t(ctx, 'profile.btnWdList'), to('wd_list')).row()
+    .text(t(ctx, 'topup.log'), to('pay_log')).row()
     .text(t(ctx, 'profile.btnNotif', { icon: u.notify_stock ? '🔔' : '🔕' }), to('notif')).row()
     .text(t(ctx, 'btn.close'), to('close'));
   return { text, kb: k.build() };
