@@ -14,15 +14,17 @@ import * as stars from '../../../payments/gateways/stars.js';
 
 // ---------- top-up: list gateways ----------
 screen('topup', async (ctx) => {
+  const u = await ensureUser(ctx.from);
   const gws = activeGateways();
-  if (!gws.length) return {
-    text: t(ctx, 'topup.none'),
-    kb: kb().add({ text: t(ctx, 'topup.back'), data: to('home'), style: 'danger' }).build(),
-  };
   const k = kb();
   for (const g of gws) k.add({ text: g.button(ctx.lang), data: to('pay', g.id), style: g.style || (g.manualReview ? 'primary' : 'success') }).row();
-  k.add({ text: t(ctx, 'topup.back'), data: to('home'), style: 'danger' });
-  return { text: t(ctx, 'topup.pick'), kb: k.build() };
+  k.text(t(ctx, 'topup.log'), to('pay_log')).row();
+  k.text(t(ctx, 'btn.close'), to('close'));
+  return {
+    text: `${t(ctx, 'topup.title', { emoji: E('balance') })}\n${RULE}\n${t(ctx, 'topup.balance', { balance: money(u.balance) })}\n\n` +
+          (gws.length ? t(ctx, 'topup.pick') : t(ctx, 'topup.none')),
+    kb: k.build(),
+  };
 });
 
 /** Generic gateway entry: n:pay:<GATEWAY_ID> */
@@ -41,6 +43,13 @@ screen('pay_cancel', async (ctx, [orderId]) => {
   return { goto: 'topup' };
 });
 
+/** Cancel while only an amount was asked (no payment intent yet) — clear pending input */
+screen('pay_amount_cancel', async (ctx) => {
+  const { clear } = await import('../../ui/input.js');
+  await clear(ctx.from.id);
+  return { goto: 'topup' };
+});
+
 // Stars specifics (packs / custom)
 screen('st_custom', async (ctx) => {
   const { min, max } = stars.limits();
@@ -56,7 +65,7 @@ screen('pay_log', async (ctx) => {
   const data = await rows(db.from('payments').select('method, amount_usd, stars, status, created_at')
     .eq('user_id', u.id).order('created_at', { ascending: false }).limit(10), 'paylog');
   const body = data.length
-    ? data.map((p) => `${statusIcon(p.status)} ${methodLabel(ctx.lang, p.method)} · ${money(p.amount_usd)}` +
+    ? data.map((p) => `${statusIcon(p.status)} ${methodLabel(ctx.lang, p.method)} · ${Number(p.amount_usd) > 0 ? money(p.amount_usd) : '—'}` +
         (p.stars ? ` (${p.stars}⭐️)` : '') + `\n    <i>${fmtDate(p.created_at, ctx.lang)}</i>`).join('\n')
     : t(ctx, 'topup.logNone');
   return { text: `${t(ctx, 'topup.logTitle')}\n${RULE}\n${body}`, kb: kb().text(t(ctx, 'btn.back'), to('topup')).build() };
