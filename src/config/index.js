@@ -48,6 +48,14 @@ export const cfg = {
     ipnSecret: opt('NOWPAYMENTS_IPN_SECRET'),
   },
 
+  binance: {
+    // Personal account API key — "Enable Reading" permission ONLY.
+    // Used to auto-verify Binance Pay transfers (GET /sapi/v1/pay/transactions).
+    // Leave empty to keep the manual admin-approval flow.
+    apiKey:    opt('BINANCE_API_KEY'),
+    secretKey: opt('BINANCE_SECRET_KEY'),
+  },
+
   log: {
     level: opt('LOG_LEVEL', 'info'),   // debug | info | warn | error
   },
