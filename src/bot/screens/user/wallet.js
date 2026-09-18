@@ -14,17 +14,15 @@ import * as stars from '../../../payments/gateways/stars.js';
 
 // ---------- top-up: list gateways ----------
 screen('topup', async (ctx) => {
-  const u = await ensureUser(ctx.from);
   const gws = activeGateways();
-  const k = kb();
-  for (const g of gws) k.add({ text: g.button(ctx.lang), data: to('pay', g.id), style: g.manualReview ? 'primary' : 'success' }).row();
-  k.text(t(ctx, 'topup.log'), to('pay_log')).row();
-  k.text(t(ctx, 'btn.close'), to('close'));
-  return {
-    text: `${t(ctx, 'topup.title', { emoji: E('balance') })}\n${RULE}\n${t(ctx, 'topup.balance', { balance: money(u.balance) })}\n\n` +
-          (gws.length ? t(ctx, 'topup.pick') : t(ctx, 'topup.none')),
-    kb: k.build(),
+  if (!gws.length) return {
+    text: t(ctx, 'topup.none'),
+    kb: kb().add({ text: t(ctx, 'topup.back'), data: to('home'), style: 'danger' }).build(),
   };
+  const k = kb();
+  for (const g of gws) k.add({ text: g.button(ctx.lang), data: to('pay', g.id), style: g.style || (g.manualReview ? 'primary' : 'success') }).row();
+  k.add({ text: t(ctx, 'topup.back'), data: to('home'), style: 'danger' });
+  return { text: t(ctx, 'topup.pick'), kb: k.build() };
 });
 
 /** Generic gateway entry: n:pay:<GATEWAY_ID> */
