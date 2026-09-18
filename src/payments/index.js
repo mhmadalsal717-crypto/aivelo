@@ -7,12 +7,13 @@
 //  screen, input handlers, webhooks and admin review pull from
 //  this list automatically.
 // ============================================================
-import binance   from './gateways/binance.js';
-import cryptomus from './gateways/cryptomus.js';
-import stars     from './gateways/stars.js';
+import binance     from './gateways/binance.js';
+import nowpayments from './gateways/nowpayments.js';
+import stars       from './gateways/stars.js';
+// import cryptomus from './gateways/cryptomus.js';   // kept on disk, unregistered — not usable from Syria
 
 /** Order = order of buttons on the top-up screen */
-export const GATEWAYS = [binance, cryptomus, stars];
+export const GATEWAYS = [binance, nowpayments, stars];
 
 const byId = Object.fromEntries(GATEWAYS.map((g) => [g.id, g]));
 
