@@ -54,7 +54,8 @@ const FAILED = new Set(['fail', 'cancel', 'system_fail', 'wrong_amount']);
 
 const gw = {
   id: 'CRYPTOMUS',
-  icon: '🪙',
+  icon: '⬛',
+  style: 'primary',          // blue button on the top-up screen
   manualReview: false,
   label:  (lang) => t(lang, 'pay.cryptomus.name'),
   button: (lang) => t(lang, 'pay.cryptomus.btn'),
