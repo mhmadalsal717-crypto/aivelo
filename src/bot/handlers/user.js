@@ -14,7 +14,7 @@ export default {
   // ---------- payments (gateway-agnostic) ----------
   async pay_amount(ctx, body, { method }, deps) {
     const gw = gateway(method);
-    if (!gw) return ctx.reply(t(ctx, 'topup.unknownMethod'));
+    if (!gw?.onAmount) return ctx.reply(t(ctx, 'topup.unknownMethod'));
     const amt = parseNum(body);
     if (amt === null || amt <= 0) {
       await ask(ctx.from.id, 'pay_amount', { method });
