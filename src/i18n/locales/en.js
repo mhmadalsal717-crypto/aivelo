@@ -143,7 +143,6 @@ export default {
   topup: {
     title: '{emoji} <b>Top up</b>', balance: 'Current balance: <b>{balance}</b>',
     pick: 'Choose a payment method:', none: '⚠️ No payment methods are enabled. Contact the admin.',
-    back: '↩️ Back',
     log: '🧾 Deposit history', logTitle: '🧾 <b>Deposit history</b>', logNone: 'No deposits yet.',
     amountTitle: '<b>Enter the deposit amount (USD)</b>', amountMin: 'Minimum: {min} USD', amountMax: 'Maximum: {max} USD',
     amountHint: 'Send digits only, e.g. 20',
@@ -156,8 +155,8 @@ export default {
   },
   pay: {
     binance: {
-      name: 'Binance Pay', btn: '🟡 Pay with Binance',
-      instructions: '<b>Binance Pay</b>\n\n1) Open Pay ← Binance ← Send\n2) Send any amount of USDT to this Binance Pay ID\n3) Copy the transaction ID (TxID) from the receipt\n4) Paste the TxID here\n\n<b>Binance Pay ID</b>\n<code>{payId}</code>\n\nPaste your Binance TxID now. Find it in Pay ← Binance ← Transactions ← open the transfer ← copy Transaction ID / Order ID.\n\n<i>This session expires in {minutes} minutes.</i>',
+      name: 'Binance Pay', btn: '💠 Pay with Binance',
+      instructions: '<b>Binance Pay</b>\n\n1) Open Pay → Binance → Send\n2) Send any amount of USDT to this Binance Pay ID\n3) Copy the transaction ID (TxID) from the receipt\n4) Paste the TxID here\n\n<b>Binance Pay ID</b>\n<code>{payId}</code>\n\nPaste the TxID now. Find it in Pay → Binance → Transaction log → open the transfer → copy the Transaction ID / Order ID.\n\nThis session expires in {minutes} minutes.',
       badTx: '❌ That does not look like a valid TxID. Paste it from your Binance receipt and try again.',
       dupTx: '❌ This transaction ID was already used.',
       received: '✅ TxID received.\n{rule}\n🔢 <code>{tx}</code>\n\nWe will verify and credit your balance, usually within minutes.',
@@ -165,7 +164,7 @@ export default {
       rejected: '❌ We could not verify your transfer. Contact support with your TxID.',
     },
     cryptomus: {
-      name: 'Cryptomus', btn: '⬛ Pay with crypto · any network', open: '🔗 Open payment page',
+      name: 'Cryptomus', btn: '⬛ Pay with crypto, any network', open: '🔗 Open payment page',
       text: 'Pay <b>USD {amount}</b> on the Cryptomus payment page.\nOpen the link below and complete the payment.\n\n<i>Your balance is credited automatically after network confirmation.</i>',
       unavailable: '❌ Crypto payments are unavailable right now. Try another method.',
       createFail: '❌ Could not create the payment page. Try again later or pick another method.',
@@ -183,7 +182,7 @@ export default {
       credited: '✅ <b>Top-up complete</b>\n{rule}\n⭐️ {n} stars → <b>{amount}</b>\n💰 Balance: <b>{balance}</b>',
       creditFail: '⚠️ Payment received but crediting failed. Contact support — your money is safe.',
     },
-    methodLabel: { CRYPTOMUS: '🪙 Crypto', STARS: '⭐️ Stars', BINANCE_PAY: '🅱️ Binance' },
+    methodLabel: { CRYPTOMUS: '⬛ Crypto', STARS: '⭐️ Stars', BINANCE_PAY: '💠 Binance' },
   },
 
   voucher: {
@@ -223,14 +222,14 @@ export default {
   admin: {
     title: '⚙️ <b>Admin panel</b>',
     stats: { users: '👥 Users: <b>{n}</b>', wd: '📤 Withdrawals: <b>{n}</b>', stuck: '⏳ Stuck orders: <b>{n}</b>',
-             bp: '🅱️ Binance transfers: <b>{n}</b>', paused: '⏸ Paused products: <b>{n}</b>', health: '{icon} GGSoma: {state}' },
+             bp: '💠 Binance transfers: <b>{n}</b>', paused: '⏸ Paused products: <b>{n}</b>', health: '{icon} GGSoma: {state}' },
     healthy: 'up', unhealthy: 'down ({reason})',
     btn: {
       stats: '📊 Statistics', pricing: '💵 Pricing', settings: '⚙️ Settings', texts: '📝 Texts',
       emoji: '😀 Emoji', providers: '🗂 Providers', products: '📦 Products', tiers: '🏅 Tiers',
-      wds: '📤 Withdrawals{badge}', stuck: '⏳ Stuck orders{badge}', pays: '🅱️ Binance transfers{badge}',
+      wds: '📤 Withdrawals{badge}', stuck: '⏳ Stuck orders{badge}', pays: '💠 Binance transfers{badge}',
       paused: '⏸ Paused{badge}', findUser: '👤 Find user', voucher: '🎟 Create voucher',
-      broadcast: '📣 Broadcast', sync: '🔄 Sync now', margins: '💵 Margin tiers',
+      broadcast: '📣 Broadcast', sync: '🔄 Sync now', margins: '💵 Margin tiers', payinfo: '💳 Payment info',
     },
 
     statsTitle: '📊 <b>Statistics — last 30 days</b>',
@@ -327,16 +326,25 @@ export default {
     retried: '🔄 Retried: {state}',
     reviewAlert: '🔴 <b>Stuck order needs review</b>\n<code>{ext}</code>\nProduct: {product}\nCharged: {amount}\nLast error: {err}\n\nCheck the GGSoma dashboard before refunding.',
 
-    paysTitle: '🅱️ <b>Binance Pay transfers</b>\n{rule}\nTap to review a transfer.', paysNone: '🅱️ No Binance transfers awaiting review.',
-    payRow: '{amount} · {name}',
-    payTitle: '🅱️ <b>Binance Pay transfer</b>\n{rule}\n👤 {name} · <code>{tg}</code>\n💵 Amount: <b>{amount}</b>\n🔢 TxID: <code>{tx}</code>\n📅 {date}\n\n<i>Verify the transfer arrived in your account before approving.</i>',
-    payBtn: { approve: '✅ Approve · {amount}', approveNoAmt: '✅ Approve & enter amount', reject: '❌ Reject' },
+    paysTitle: '💠 <b>Binance Pay transfers</b>\n{rule}\nTap to review a transfer.', paysNone: '💠 No Binance transfers awaiting review.',
+    payRow: '{amount} · {name}', payRowTx: '{name} · TxID <code>{tx}</code>',
+    payTitle: '💠 <b>Binance Pay transfer</b>\n{rule}\n👤 {name} · <code>{tg}</code>\n💵 Amount: <b>{amount}</b>\n🔢 TxID: <code>{tx}</code>\n📅 {date}\n\n<i>Verify the transfer arrived in your account before approving. If the amount is "—" you will be asked to enter it after approving.</i>',
+    payBtn: { approve: '✅ Approve · {amount}', approveAsk: '✅ Approve & set amount', reject: '❌ Reject' },
+    payAskAmount: '💰 Send the deposited amount in USD to credit the customer, e.g. <code>20</code>',
+    payBadAmount: '❌ Invalid amount. Send a number greater than zero, e.g. <code>20</code>',
     payApproved: '✅ Credited {amount} to the customer.\nTheir balance is now {balance}.', payAlready: 'ℹ️ This payment was already credited.\nCustomer balance: {balance}',
     payRejected: '❌ Payment rejected.', payCantReject: '⚠️ This payment was already credited — it cannot be rejected.', payNotFound: 'Payment not found.',
-    payNew: '🅱️ <b>Binance Pay transfer awaiting review</b>\n{rule}\n👤 {name} · <code>{tg}</code>\n🔢 TxID: <code>{tx}</code>\n💰 Amount: unspecified — entered on approval\n\nVerify the transfer arrived in your account before approving.',
-    payAmtUnknown: 'unspecified — entered on approval',
-    payAmtAsk: '💰 <b>Enter the transfer amount</b>\n{rule}\n🔢 TxID: <code>{tx}</code>\n\nSend the actual received amount in USD, e.g. <code>20</code>',
-    payAmtBad: '❌ Send a valid amount greater than zero, e.g. 20',
+    payNew: '💠 <b>Binance Pay transfer awaiting review</b>\n{rule}\n👤 {name} · <code>{tg}</code>\n🔢 TxID: <code>{tx}</code>\n\nVerify the transfer arrived in your account (Pay → Binance → Transaction log), then approve and enter the amount.',
+
+    payInfoTitle: '💳 <b>Payment info</b>\n{rule}',
+    payInfoBinance: '💠 Binance Pay ID: <code>{id}</code>',
+    payInfoBinanceEmpty: '💠 Binance Pay ID: ⚠️ not set',
+    payInfoCrypto: '⬛ Crypto (Cryptomus): {state}',
+    payInfoCryptoHint: '<i>Needs CRYPTOMUS_MERCHANT_ID, CRYPTOMUS_API_KEY, CRYPTOMUS_PAYMENT_KEY and WEBHOOK_URL in the Render env vars.</i>',
+    payInfoStars: '⭐️ Telegram Stars: 🟢 ready',
+    payInfoLimits: '💵 Deposit limits: {min} – {max} USD',
+    payInfoEdit: '✏️ Edit Binance Pay ID',
+    payInfoSettings: '💳 Payment method settings',
 
     findPrompt: '👤 Send a Telegram ID (number) or @username:', userNotFound: '❌ User not found.',
     userTitle: '👤 <b>{name}</b> {username}\n{rule}\n🆔 <code>{tg}</code>\n🌐 {lang}\n💰 Balance: <b>{balance}</b>\n💸 Spent: {spent}\n🛒 Orders: {orders}\n🎁 Referral earnings: {ref}\n👥 Invited: {invited}\n📅 {date}{banned}',
