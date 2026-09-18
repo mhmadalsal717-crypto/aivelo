@@ -4,7 +4,7 @@
 import { kb } from '../bot/ui/kb.js';
 import { to } from '../bot/ui/nav.js';
 import { ask } from '../bot/ui/input.js';
-import { money, esc } from '../lib/fmt.js';
+import { money } from '../lib/fmt.js';
 import { t } from '../i18n/index.js';
 import { depositLimits } from './service.js';
 
@@ -16,8 +16,7 @@ export async function askAmount(ctx, gw) {
     text: [
       t(ctx, 'topup.amountTitle'), '',
       t(ctx, 'topup.amountMin', { min }), t(ctx, 'topup.amountMax', { max }), '',
-      t(ctx, 'topup.amountHint'), '',
-      t(ctx, 'topup.method', { name: esc(gw.label(ctx.lang)) }),
+      t(ctx, 'topup.amountHint'),
     ].join('\n'),
     kb: cancelKb(ctx),
   };
