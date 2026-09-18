@@ -11,6 +11,7 @@ import { ask } from '../ui/input.js';
 import { t } from '../../i18n/index.js';
 import { basePrice, effMarkup, maxTierDiscount } from '../../core/pricing.js';
 import { enqueueBroadcast } from '../../jobs/broadcast.js';
+import { getPaymentRow, creditPayment, setPayment } from '../../payments/service.js';
 
 const back = (ctx, screen, args = []) => go(ctx, screen, args, { forceNew: true });
 
@@ -174,5 +175,28 @@ export default {
     const n = await enqueueBroadcast({ text: body, createdBy: ctx.from.id });
     await ctx.reply(t(ctx, 'admin.bcQueued', { n }));
     await back(ctx, 'admin');
+  },
+
+  // ---------- manual payment credit (Binance Pay any-amount flow) ----------
+  async pay_credit(ctx, body, { orderId }) {
+    const amt = parseNum(body);
+    if (amt === null || amt <= 0) {
+      await ask(ctx.from.id, 'pay_credit', { orderId });
+      return ctx.reply(t(ctx, 'admin.payAmtBad'));
+    }
+    const row = await getPaymentRow(orderId);
+    if (!row) return ctx.reply(t(ctx, 'admin.payNotFound'));
+    if (row.credited) return ctx.reply(t(ctx, 'admin.payAlready', { balance: money(row.amount_usd) }));
+
+    await setPayment(orderId, { amount_usd: amt });
+    const r = await creditPayment(orderId, row.external_id);
+    if (!r.credited) return ctx.reply(t(ctx, 'admin.payAlready', { balance: money(r.new_balance) }));
+
+    const lang = row.users.lang || 'ar';
+    ctx.api.sendMessage(row.users.tg_id,
+      t(lang, 'pay.binance.approved', { amount: money(r.amount), balance: money(r.new_balance) }),
+      { parse_mode: 'HTML' }).catch(() => {});
+    await ctx.reply(t(ctx, 'admin.payApproved', { amount: money(r.amount), balance: money(r.new_balance) }));
+    return back(ctx, 'a_pays');
   },
 };
