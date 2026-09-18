@@ -8,7 +8,7 @@
 //  this list automatically.
 // ============================================================
 import binance     from './gateways/binance.js';
-import nowpayments from './gateways/nowpayments.js';
+import nowpayments from './nowpayments.js';
 import stars       from './gateways/stars.js';
 // import cryptomus from './gateways/cryptomus.js';   // kept on disk, unregistered — not usable from Syria
 
