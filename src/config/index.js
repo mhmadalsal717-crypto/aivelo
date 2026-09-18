@@ -43,6 +43,11 @@ export const cfg = {
     paymentKey: opt('CRYPTOMUS_PAYMENT_KEY') || opt('CRYPTOMUS_API_KEY'),
   },
 
+  nowpayments: {
+    apiKey:    opt('NOWPAYMENTS_API_KEY'),
+    ipnSecret: opt('NOWPAYMENTS_IPN_SECRET'),
+  },
+
   log: {
     level: opt('LOG_LEVEL', 'info'),   // debug | info | warn | error
   },
