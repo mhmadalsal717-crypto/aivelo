@@ -169,6 +169,12 @@ export default {
       unavailable: '❌ Crypto payments are unavailable right now. Try another method.',
       createFail: '❌ Could not create the payment page. Try again later or pick another method.',
     },
+    nowpayments: {
+      name: 'NOWPayments', btn: '⬛ Pay with crypto, any network', open: '🔗 Open payment page',
+      text: 'Pay <b>USD {amount}</b> on the NOWPayments payment page.\nOpen the link below, pick your coin and complete the payment.\n\n<i>Your balance is credited automatically after network confirmation.</i>',
+      unavailable: '❌ Crypto payments are unavailable right now. Try another method.',
+      createFail: '❌ Could not create the payment page. Try again later or pick another method.',
+    },
     stars: {
       name: 'Telegram Stars', btn: '⭐️ Pay with Telegram Stars',
       title: '⭐️ <b>Telegram Stars</b>', rate: 'Rate: <b>1 ⭐️ = {rate} USDT</b>', range: 'Allowed range: {min}–{max} stars',
@@ -182,7 +188,7 @@ export default {
       credited: '✅ <b>Top-up complete</b>\n{rule}\n⭐️ {n} stars → <b>{amount}</b>\n💰 Balance: <b>{balance}</b>',
       creditFail: '⚠️ Payment received but crediting failed. Contact support — your money is safe.',
     },
-    methodLabel: { CRYPTOMUS: '⬛ Crypto', STARS: '⭐️ Stars', BINANCE_PAY: '💠 Binance' },
+    methodLabel: { CRYPTOMUS: '⬛ Crypto', NOWPAYMENTS: '⬛ Crypto', STARS: '⭐️ Stars', BINANCE_PAY: '💠 Binance' },
   },
 
   voucher: {
@@ -339,8 +345,8 @@ export default {
     payInfoTitle: '💳 <b>Payment info</b>\n{rule}',
     payInfoBinance: '💠 Binance Pay ID: <code>{id}</code>',
     payInfoBinanceEmpty: '💠 Binance Pay ID: ⚠️ not set',
-    payInfoCrypto: '⬛ Crypto (Cryptomus): {state}',
-    payInfoCryptoHint: '<i>Needs CRYPTOMUS_MERCHANT_ID, CRYPTOMUS_API_KEY, CRYPTOMUS_PAYMENT_KEY and WEBHOOK_URL in the Render env vars.</i>',
+    payInfoCrypto: '⬛ Crypto (NOWPayments): {state}',
+    payInfoCryptoHint: '<i>Needs NOWPAYMENTS_API_KEY, NOWPAYMENTS_IPN_SECRET and WEBHOOK_URL in the Render env vars.</i>',
     payInfoStars: '⭐️ Telegram Stars: 🟢 ready',
     payInfoLimits: '💵 Deposit limits: {min} – {max} USD',
     payInfoEdit: '✏️ Edit Binance Pay ID',
