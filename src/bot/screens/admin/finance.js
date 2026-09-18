@@ -4,6 +4,7 @@
 import { adminScreen, backTo } from './_shared.js';
 import { to } from '../../ui/nav.js';
 import { kb } from '../../ui/kb.js';
+import { ask, clear } from '../../ui/input.js';
 import { db, q, one, rows, rpc } from '../../../lib/db.js';
 import { esc, money, RULE, fmtDate, statusIcon, trim } from '../../../lib/fmt.js';
 import { t } from '../../../i18n/index.js';
@@ -52,7 +53,7 @@ adminScreen('a_pays', async (ctx) => {
     .eq('status', 'PENDING').in('method', methods).not('external_id', 'is', null).order('created_at').limit(15), 'a_pays');
   if (!data.length) return { text: t(ctx, 'admin.paysNone'), kb: backTo(ctx, 'admin') };
   const k = kb();
-  for (const p of data) k.text(`${methodLabel(ctx.lang, p.method)} ${t(ctx, 'admin.payRow', { amount: money(p.amount_usd), name: esc(p.users.first_name || p.users.tg_id) })}`, to('a_pay', p.order_id)).row();
+  for (const p of data) k.text(`${methodLabel(ctx.lang, p.method)} ${t(ctx, 'admin.payRow', { amount: Number(p.amount_usd) > 0 ? money(p.amount_usd) : '—', name: esc(p.users.first_name || p.users.tg_id) })}`, to('a_pay', p.order_id)).row();
   k.text(t(ctx, 'btn.back'), to('admin'));
   return { text: t(ctx, 'admin.paysTitle', { rule: RULE }), kb: k.build() };
 });
@@ -60,15 +61,32 @@ adminScreen('a_pays', async (ctx) => {
 adminScreen('a_pay', async (ctx, [orderId]) => {
   const row = await getPaymentRow(orderId);
   if (!row) return { text: t(ctx, 'admin.payNotFound'), kb: backTo(ctx, 'a_pays') };
-  return { text: t(ctx, 'admin.payTitle', { rule: RULE, name: esc(row.users.first_name || ''), tg: row.users.tg_id, amount: money(row.amount_usd), tx: esc(row.external_id || '—'), date: fmtDate(row.created_at, ctx.lang) }),
-    kb: kb().add({ text: t(ctx, 'admin.payBtn.approve', { amount: money(row.amount_usd) }), data: to('a_payok', orderId), style: 'success' }).row()
+  const known = Number(row.amount_usd) > 0;
+  return { text: t(ctx, 'admin.payTitle', { rule: RULE, name: esc(row.users.first_name || ''), tg: row.users.tg_id, amount: known ? money(row.amount_usd) : t(ctx, 'admin.payAmtUnknown'), tx: esc(row.external_id || '—'), date: fmtDate(row.created_at, ctx.lang) }),
+    kb: kb().add({ text: known ? t(ctx, 'admin.payBtn.approve', { amount: money(row.amount_usd) }) : t(ctx, 'admin.payBtn.approveNoAmt'),
+                   data: to(known ? 'a_payok' : 'a_payamt', orderId), style: 'success' }).row()
             .add({ text: t(ctx, 'admin.payBtn.reject'), data: to('a_payno', orderId), style: 'danger' }).row()
             .text(t(ctx, 'btn.back'), to('a_pays')).build() };
+});
+
+adminScreen('a_payamt', async (ctx, [orderId]) => {
+  const row = await getPaymentRow(orderId);
+  if (!row) return { text: t(ctx, 'admin.payNotFound'), kb: backTo(ctx, 'a_pays') };
+  if (row.credited || row.status !== 'PENDING') return { text: t(ctx, 'admin.payAlready', { balance: money(row.amount_usd) }), kb: backTo(ctx, 'a_pays') };
+  await ask(ctx.from.id, 'pay_credit', { orderId });
+  return { text: t(ctx, 'admin.payAmtAsk', { rule: RULE, tx: esc(row.external_id || '—') }),
+    kb: kb().text(t(ctx, 'btn.cancel'), to('a_payamt_cancel', orderId)).build() };
+});
+
+adminScreen('a_payamt_cancel', async (ctx, [orderId]) => {
+  await clear(ctx.from.id);
+  return { goto: 'a_pay', args: [orderId] };
 });
 
 adminScreen('a_payok', async (ctx, [orderId]) => {
   const row = await getPaymentRow(orderId);
   if (!row) return { text: t(ctx, 'admin.payNotFound'), kb: backTo(ctx, 'a_pays') };
+  if (Number(row.amount_usd) === 0) return { goto: 'a_payamt', args: [orderId] };  // any-amount flow → ask first
   const r = await creditPayment(orderId, row.external_id);
   if (!r.credited) return { text: t(ctx, 'admin.payAlready', { balance: money(r.new_balance) }), kb: backTo(ctx, 'a_pays') };
   const lang = row.users.lang || 'ar';
