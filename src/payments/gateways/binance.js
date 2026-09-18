@@ -10,13 +10,19 @@
 //  Config: texts.binance_pay_id — set from Admin → Payment info.
 // ============================================================
 import { T, Snum, Sbool } from '../../lib/settings.js';
-import { RULE, esc } from '../../lib/fmt.js';
+import { RULE, esc, money } from '../../lib/fmt.js';
 import { t } from '../../i18n/index.js';
-import { db, one } from '../../lib/db.js';
+import { db, one, rows } from '../../lib/db.js';
 import { kb } from '../../bot/ui/kb.js';
 import { to } from '../../bot/ui/nav.js';
 import { ask } from '../../bot/ui/input.js';
-import { openPayment, setPayment, getPaymentRow } from '../service.js';
+import { openPayment, setPayment, getPaymentRow, creditPayment } from '../service.js';
+import { creditedKb } from '../flow.js';
+import { cfg } from '../../config/index.js';
+import { logger } from '../../lib/logger.js';
+import { getPayTransactions } from '../../lib/binanceApi.js';
+
+const log = logger('binance-pay-verify');
 
 const payId = () => T('binance_pay_id', 'ar', '').trim();
 const looksLikeTxId = (s) => /^[A-Za-z0-9_-]{8,80}$/.test(String(s || '').trim());
@@ -72,3 +78,51 @@ const gw = {
 };
 
 export default gw;
+
+// ============================================================
+//  Auto-verify — polls OUR Binance account's Pay history and
+//  matches it against pending BINANCE_PAY orders by transactionId
+//  (the TxID the customer pasted, stored as payments.external_id).
+//
+//  Runs only if BINANCE_API_KEY / BINANCE_SECRET_KEY are set — if
+//  not, this is a no-op and the manual admin-approval flow (above)
+//  keeps working exactly as before. Called from jobs/scheduler.js.
+// ============================================================
+export async function verifyPending({ bot, notifyAdmin }) {
+  if (!(cfg.binance.apiKey && cfg.binance.secretKey)) return;
+
+  const pending = await rows(
+    db.from('payments').select('*, users!inner(tg_id, lang)')
+      .eq('method', 'BINANCE_PAY').eq('status', 'PENDING').eq('credited', false)
+      .not('external_id', 'is', null),
+    'binance.verify.pending',
+  );
+  if (!pending.length) return;
+
+  let txs;
+  try {
+    const res = await getPayTransactions({ startTime: Date.now() - 3 * 24 * 60 * 60 * 1000 });
+    txs = res?.data || [];
+  } catch (e) {
+    log.error('poll failed', e);
+    return;
+  }
+
+  for (const row of pending) {
+    // Match by the exact TxID the customer pasted. Require it to be an
+    // incoming (positive) USDT transfer — matches the "send USDT" instructions.
+    const match = txs.find((tx) => tx.transactionId === row.external_id
+      && Number(tx.amount) > 0 && tx.currency === 'USDT');
+    if (!match) continue;
+
+    await setPayment(row.order_id, { amount_usd: Number(match.amount), payload: match });
+    const r = await creditPayment(row.order_id, match.transactionId);
+    if (!r.credited) continue;
+
+    const lang = row.users.lang || 'ar';
+    bot.api.sendMessage(row.users.tg_id,
+      t(lang, 'pay.binance.approved', { amount: money(r.amount), balance: money(r.new_balance) }),
+      { parse_mode: 'HTML', reply_markup: creditedKb({ lang }) }).catch(() => {});
+    notifyAdmin?.(t('ar', 'admin.alert.deposit', { method: 'Binance Pay (auto)', amount: money(r.amount), tg: row.users.tg_id }));
+  }
+}
