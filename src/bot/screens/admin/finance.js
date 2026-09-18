@@ -103,7 +103,7 @@ adminScreen('a_payno', async (ctx, [orderId]) => {
 
 // ---------- payment info: credentials + gateway status in one place ----------
 adminScreen('a_payinfo', async (ctx) => {
-  const bin = gateway('BINANCE_PAY'), crypt = gateway('CRYPTOMUS');
+  const bin = gateway('BINANCE_PAY'), crypt = gateway('NOWPAYMENTS');
   const payId = T('binance_pay_id', 'ar', '').trim();
   const { min, max } = depositLimits();
 
