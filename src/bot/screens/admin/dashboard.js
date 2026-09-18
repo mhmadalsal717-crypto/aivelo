@@ -39,6 +39,7 @@ adminScreen('admin', async (ctx) => {
     .text(B('tiers'), to('a_tiers')).text(B('emoji'), to('a_emoji')).row()
     .add({ text: B('pays', { badge: badge(bp) }), data: to('a_pays'), style: bp ? 'primary' : undefined })
     .add({ text: B('wds', { badge: badge(wd) }), data: to('a_wds'), style: wd ? 'primary' : undefined }).row()
+    .text(B('payinfo'), to('a_payinfo')).row()
     .add({ text: B('stuck', { badge: badge(stuck) }), data: to('a_stuck'), style: stuck ? 'danger' : undefined })
     .add({ text: B('paused', { badge: badge(paused) }), data: to('a_prods', 'paused', '1'), style: paused ? 'danger' : undefined }).row()
     .text(B('findUser'), to('a_ufind')).text(B('voucher'), to('a_vnew')).row()
