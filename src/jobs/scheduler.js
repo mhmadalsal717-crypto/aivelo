@@ -20,6 +20,7 @@ import { expireStale } from '../payments/service.js';
 import { purgeExpired } from '../bot/ui/input.js';
 import { processBroadcasts } from './broadcast.js';
 import { gg } from '../services/ggsoma.js';
+import { verifyPending as verifyBinancePayPending } from '../payments/gateways/binance.js';
 import { t } from '../i18n/index.js';
 
 const log = logger('jobs');
@@ -67,6 +68,10 @@ export function startJobs({ bot, notifyAdmin, notifyUser }) {
 
   // ---- reconciler: every minute ----
   loop('recon', () => reconcileOnce({ notifyAdmin, notifyUser }), () => 60_000);
+
+  // ---- Binance Pay auto-verify: every 30s (no-op if BINANCE_API_KEY unset) ----
+  loop('binancepay', () => verifyBinancePayPending({ bot, notifyAdmin }),
+    () => Math.max(15, Snum('binance_verify_sec', 30)) * 1000);
 
   // ---- stock alerts: every 90s ----
   loop('alerts', async () => {
