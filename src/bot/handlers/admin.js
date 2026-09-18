@@ -177,26 +177,24 @@ export default {
     await back(ctx, 'admin');
   },
 
-  // ---------- manual payment credit (Binance Pay any-amount flow) ----------
-  async pay_credit(ctx, body, { orderId }) {
+  // ---------- manual payment amount (Binance Pay "any amount" flow) ----------
+  async a_pay_amount(ctx, body, { orderId }, { bot }) {
     const amt = parseNum(body);
     if (amt === null || amt <= 0) {
-      await ask(ctx.from.id, 'pay_credit', { orderId });
-      return ctx.reply(t(ctx, 'admin.payAmtBad'));
+      await ask(ctx.from.id, 'a_pay_amount', { orderId });
+      return ctx.reply(t(ctx, 'admin.payBadAmount'), { parse_mode: 'HTML' });
     }
     const row = await getPaymentRow(orderId);
     if (!row) return ctx.reply(t(ctx, 'admin.payNotFound'));
     if (row.credited) return ctx.reply(t(ctx, 'admin.payAlready', { balance: money(row.amount_usd) }));
 
     await setPayment(orderId, { amount_usd: amt });
-    const r = await creditPayment(orderId, row.external_id);
+    const r = await creditPayment(orderId, null);   // external_id (TxID) already stored
     if (!r.credited) return ctx.reply(t(ctx, 'admin.payAlready', { balance: money(r.new_balance) }));
 
     const lang = row.users.lang || 'ar';
-    ctx.api.sendMessage(row.users.tg_id,
-      t(lang, 'pay.binance.approved', { amount: money(r.amount), balance: money(r.new_balance) }),
-      { parse_mode: 'HTML' }).catch(() => {});
-    await ctx.reply(t(ctx, 'admin.payApproved', { amount: money(r.amount), balance: money(r.new_balance) }));
-    return back(ctx, 'a_pays');
+    bot.api.sendMessage(row.users.tg_id, t(lang, 'pay.binance.approved', { amount: money(r.amount), balance: money(r.new_balance) }), { parse_mode: 'HTML' }).catch(() => {});
+    await ctx.reply(t(ctx, 'admin.payApproved', { amount: money(r.amount), balance: money(r.new_balance) }), { parse_mode: 'HTML' });
+    await back(ctx, 'a_pays');
   },
 };
