@@ -25,6 +25,9 @@ export default {
   /** Emoji shown on buttons */
   icon: '💠',
 
+  /** Inline-button color on the top-up screen: 'success' green · 'primary' blue · 'danger' red */
+  style: 'success',
+
   /** true → admin must approve each payment (shows in admin review list) */
   manualReview: false,
 
