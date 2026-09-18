@@ -31,7 +31,7 @@ export function createServer({ bot, notifyAdmin }) {
     hooks.post(path, express.json({ limit: '256kb' }), async (req, res) => {
       res.status(200).json({ ok: true });   // ack fast; providers retry on delay
       try {
-        const r = await gw.onWebhook(req.body || {}, { bot, notifyAdmin });
+        const r = await gw.onWebhook(req.body || {}, { bot, notifyAdmin, headers: req.headers });
         if (!r?.ok) log.warn(`${gw.id} webhook rejected`, { reason: r?.reason });
       } catch (e) { log.error(`${gw.id} webhook error`, e); }
     });
