@@ -214,6 +214,13 @@ export default {
       unavailable: '❌ الدفع بالعملات الرقمية مو متاح حالياً. جرّب طريقة تانية.',
       createFail: '❌ تعذّر إنشاء صفحة الدفع. جرّب بعد شوي أو اختر طريقة تانية.',
     },
+    nowpayments: {
+      name: 'NOWPayments', btn: '⬛ الدفع بالعملات الرقمية اي شبكة',
+      open: '🔗 فتح صفحة الدفع',
+      text: 'ادفع <b>USD {amount}</b> عبر صفحة الدفع في NOWPayments.\nافتح الرابط أدناه واختر العملة الرقمية وأكمل الدفع.\n\n<i>الرصيد بينضاف تلقائياً بعد التأكيد على الشبكة.</i>',
+      unavailable: '❌ الدفع بالعملات الرقمية مو متاح حالياً. جرّب طريقة تانية.',
+      createFail: '❌ تعذّر إنشاء صفحة الدفع. جرّب بعد شوي أو اختر طريقة تانية.',
+    },
     stars: {
       name: 'Telegram Stars', btn: '⭐️ الدفع عبر Telegram Stars',
       title: '⭐️ <b>Telegram Stars</b>', rate: 'المعدل: <b>1 ⭐️ = {rate} USDT</b>', range: 'النطاق المسموح: {min}–{max} نجمة',
@@ -227,7 +234,7 @@ export default {
       credited: '✅ <b>تم الشحن</b>\n{rule}\n⭐️ {n} نجمة → <b>{amount}</b>\n💰 رصيدك: <b>{balance}</b>',
       creditFail: '⚠️ وصل الدفع بس صار خلل بالشحن. تواصل مع الدعم — فلوسك محفوظة.',
     },
-    methodLabel: { CRYPTOMUS: '⬛ عملات رقمية', STARS: '⭐️ نجوم', BINANCE_PAY: '💠 Binance' },
+    methodLabel: { CRYPTOMUS: '⬛ عملات رقمية', NOWPAYMENTS: '⬛ عملات رقمية', STARS: '⭐️ نجوم', BINANCE_PAY: '💠 Binance' },
   },
 
   // ---------- القسائم ----------
@@ -407,8 +414,8 @@ export default {
     payInfoTitle: '💳 <b>معلومات الدفع</b>\n{rule}',
     payInfoBinance: '💠 Binance Pay ID: <code>{id}</code>',
     payInfoBinanceEmpty: '💠 Binance Pay ID: ⚠️ غير مضبوط',
-    payInfoCrypto: '⬛ العملات الرقمية (Cryptomus): {state}',
-    payInfoCryptoHint: '<i>تحتاج CRYPTOMUS_MERCHANT_ID و CRYPTOMUS_API_KEY و CRYPTOMUS_PAYMENT_KEY و WEBHOOK_URL بمتغيرات Render.</i>',
+    payInfoCrypto: '⬛ العملات الرقمية (NOWPayments): {state}',
+    payInfoCryptoHint: '<i>تحتاج NOWPAYMENTS_API_KEY و NOWPAYMENTS_IPN_SECRET و WEBHOOK_URL بمتغيرات Render.</i>',
     payInfoStars: '⭐️ Telegram Stars: 🟢 جاهز',
     payInfoLimits: '💵 حدود الإيداع: {min} – {max} USD',
     payInfoEdit: '✏️ تعديل معرّف Binance Pay',
