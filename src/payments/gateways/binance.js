@@ -1,12 +1,13 @@
 // ============================================================
 //  Binance Pay — manual transfer via Pay ID, admin approves
-//  Config: texts.binance_pay_id (set from admin → Texts)
 //
-//  Flow (matches the reference bot exactly):
-//    1. Customer picks Binance → session opens IMMEDIATELY, no amount
-//       ("أرسل أي مبلغ USDT" — any amount works)
-//    2. Customer pastes the TxID from the Binance receipt
-//    3. Admin reviews → enters the ACTUAL received amount → credit
+//  Reference flow (matches the screenshots exactly):
+//    pick method → instructions ("send ANY amount") → paste TxID
+//    → admin verifies the transfer in his own Binance account
+//    → taps approve and enters the deposited amount → the wallet
+//      is credited atomically (credit_payment RPC, idempotent).
+//
+//  Config: texts.binance_pay_id — set from Admin → Payment info.
 // ============================================================
 import { T, Snum, Sbool } from '../../lib/settings.js';
 import { RULE, esc } from '../../lib/fmt.js';
@@ -22,15 +23,15 @@ const looksLikeTxId = (s) => /^[A-Za-z0-9_-]{8,80}$/.test(String(s || '').trim()
 
 const gw = {
   id: 'BINANCE_PAY',
-  icon: '🟡',
-  style: 'success',          // green button on the top-up screen
+  icon: '💠',
+  style: 'success',            // green button on the top-up menu, like the reference
   manualReview: true,
   label:  (lang) => t(lang, 'pay.binance.name'),
   button: (lang) => t(lang, 'pay.binance.btn'),
   isEnabled:    () => Sbool('pay_binance', true),
   isConfigured: () => !!payId(),
 
-  /** No amount step — open the session right away and wait for the TxID */
+  /** No amount step — the customer sends ANY amount (reference mechanism) */
   async start(ctx) {
     const minutes = Snum('binance_session_min', 30);
     const pay = await openPayment({ tgId: ctx.from.id, method: 'BINANCE_PAY', amountUsd: 0, minutes });
@@ -40,7 +41,7 @@ const gw = {
 
     return {
       text: t(ctx, 'pay.binance.instructions', { payId: payId(), minutes }),
-      kb: kb().add({ text: t(ctx, 'btn.cancel'), data: to('pay_cancel', pay.order_id), style: 'danger' }).build(),
+      kb: kb().add({ text: t(ctx, 'btn.cancel'), data: to('pay_cancel', pay.order_id) }).build(),
     };
   },
 
@@ -58,11 +59,10 @@ const gw = {
 
     await setPayment(orderId, { external_id: txid, status: 'PENDING' });
 
-    // amount is unknown at this point — admin enters it on approval
     notifyAdmin?.(t('ar', 'admin.payNew', {
-      rule: RULE, name: esc(ctx.from.first_name || ''), tg: ctx.from.id, tx: esc(txid),
+      name: esc(ctx.from.first_name || ''), tg: ctx.from.id, tx: esc(txid),
     }), kb()
-      .add({ text: t('ar', 'admin.payBtn.approveNoAmt'), data: to('a_payamt', orderId), style: 'success' }).row()
+      .add({ text: t('ar', 'admin.payBtn.approveAsk'), data: to('a_payok', orderId), style: 'success' }).row()
       .add({ text: t('ar', 'admin.payBtn.reject'), data: to('a_payno', orderId), style: 'danger' })
       .build());
 
