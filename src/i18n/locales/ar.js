@@ -187,10 +187,9 @@ export default {
   topup: {
     title: '{emoji} <b>شحن رصيد</b>', balance: 'رصيدك الحالي: <b>{balance}</b>',
     pick: 'اختر طريقة الدفع المناسبة لك:', none: '⚠️ ما في طرق دفع مفعّلة. تواصل مع الأدمن.',
-    back: '↩️ رجوع',
     log: '🧾 سجل الشحن', logTitle: '🧾 <b>سجل الشحن</b>', logNone: 'ما في دفعات بعد.',
     amountTitle: '<b>أدخل مبلغ الإيداع (USD)</b>', amountMin: 'الحد الأدنى: {min} USD', amountMax: 'الحد الأقصى: {max} USD',
-    amountHint: 'أرسل أرقامًا فقط، مثل 20',
+    amountHint: 'أرسل أرقاماً فقط، مثال 20',
     amountRange: '❌ المبلغ لازم يكون بين {min} و {max}.',
     notConfigured: '⚠️ {name} مو مضبوط بعد.', unknownMethod: '❌ طريقة دفع غير معروفة.',
     credited: '✅ تم شحن <b>{amount}</b> لحسابك.\n💰 رصيدك: <b>{balance}</b>',
@@ -200,8 +199,8 @@ export default {
   },
   pay: {
     binance: {
-      name: 'Binance Pay', btn: '🟡 الدفع عبر Binance',
-      instructions: '<b>Binance Pay</b>\n\n1) افتح Pay ← Binance ← تحويل\n2) أرسل أي مبلغ USDT إلى معرف Binance Pay هذا\n3) انسخ رقم العملية (TxID) من الإيصال\n4) الصق رقم العملية هنا\n\n<b>معرف Binance Pay</b>\n<code>{payId}</code>\n\nالصق رقم عملية (TxID) Binance الآن. تجده في Pay ← Binance ← سجل العمليات ← افتح التحويل ← انسخ Transaction ID / Order ID.\n\n<i>تنتهي هذه الجلسة خلال {minutes} دقيقة.</i>',
+      name: 'Binance Pay', btn: '💠 الدفع عبر Binance',
+      instructions: '<b>Binance Pay</b>\n\n1) افتح Pay ← Binance ← تحويل\n2) أرسل أي مبلغ USDT إلى معرّف Binance Pay هذا\n3) انسخ رقم العملية (TxID) من الإيصال\n4) الصق رقم العملية هنا\n\n<b>معرّف Binance Pay</b>\n<code>{payId}</code>\n\nالصق رقم عملية (TxID) الآن. تجده في Pay ← Binance ← سجل العمليات ← افتح التحويل ← انسخ Transaction ID / Order ID.\n\nتنتهي هذه الجلسة خلال {minutes} دقيقة.',
       badTx: '❌ رقم العملية مو بالشكل الصحيح. الصقه من إيصال Binance وجرّب مرة تانية.',
       dupTx: '❌ رقم العملية هذا مستعمل من قبل.',
       received: '✅ وصلنا رقم العملية.\n{rule}\n🔢 <code>{tx}</code>\n\nرح نتحقّق ونضيف الرصيد. عادة خلال دقائق.',
@@ -228,7 +227,7 @@ export default {
       credited: '✅ <b>تم الشحن</b>\n{rule}\n⭐️ {n} نجمة → <b>{amount}</b>\n💰 رصيدك: <b>{balance}</b>',
       creditFail: '⚠️ وصل الدفع بس صار خلل بالشحن. تواصل مع الدعم — فلوسك محفوظة.',
     },
-    methodLabel: { CRYPTOMUS: '🪙 عملات رقمية', STARS: '⭐️ نجوم', BINANCE_PAY: '🅱️ Binance' },
+    methodLabel: { CRYPTOMUS: '⬛ عملات رقمية', STARS: '⭐️ نجوم', BINANCE_PAY: '💠 Binance' },
   },
 
   // ---------- القسائم ----------
@@ -277,14 +276,14 @@ export default {
   admin: {
     title: '⚙️ <b>لوحة التحكم</b>',
     stats: { users: '👥 المستخدمين: <b>{n}</b>', wd: '📤 طلبات سحب: <b>{n}</b>', stuck: '⏳ طلبات عالقة: <b>{n}</b>',
-             bp: '🅱️ تحويلات Binance: <b>{n}</b>', paused: '⏸ منتجات موقوفة: <b>{n}</b>', health: '{icon} GGSoma: {state}' },
+             bp: '💠 تحويلات Binance: <b>{n}</b>', paused: '⏸ منتجات موقوفة: <b>{n}</b>', health: '{icon} GGSoma: {state}' },
     healthy: 'شغّال', unhealthy: 'متوقف ({reason})',
     btn: {
       stats: '📊 الإحصائيات', pricing: '💵 التسعير', settings: '⚙️ الإعدادات', texts: '📝 النصوص',
       emoji: '😀 الإيموجي', providers: '🗂 المزوّدين', products: '📦 المنتجات', tiers: '🏅 المستويات',
-      wds: '📤 السحوبات{badge}', stuck: '⏳ الطلبات العالقة{badge}', pays: '🅱️ تحويلات Binance{badge}',
+      wds: '📤 السحوبات{badge}', stuck: '⏳ الطلبات العالقة{badge}', pays: '💠 تحويلات Binance{badge}',
       paused: '⏸ موقوفة{badge}', findUser: '👤 بحث مستخدم', voucher: '🎟 إنشاء قسيمة',
-      broadcast: '📣 بث رسالة', sync: '🔄 مزامنة الآن', margins: '💵 شرائح الهامش',
+      broadcast: '📣 بث رسالة', sync: '🔄 مزامنة الآن', margins: '💵 شرائح الهامش', payinfo: '💳 معلومات الدفع',
     },
 
     // الإحصائيات
@@ -394,16 +393,26 @@ export default {
     reviewAlert: '🔴 <b>طلب عالق يحتاج مراجعة</b>\n<code>{ext}</code>\nمنتج: {product}\nمخصوم: {amount}\nآخر خطأ: {err}\n\nافحص لوحة GGSoma قبل ما ترجّع الرصيد.',
 
     // Binance
-    paysTitle: '🅱️ <b>تحويلات Binance Pay</b>\n{rule}\nاضغط لمراجعة التحويل.', paysNone: '🅱️ ما في تحويلات Binance بانتظار المراجعة.',
-    payRow: '{amount} · {name}',
-    payTitle: '🅱️ <b>تحويل Binance Pay</b>\n{rule}\n👤 {name} · <code>{tg}</code>\n💵 المبلغ: <b>{amount}</b>\n🔢 TxID: <code>{tx}</code>\n📅 {date}\n\n<i>تحقّق من وصول التحويل بحسابك قبل الموافقة.</i>',
-    payBtn: { approve: '✅ موافقة · {amount}', approveNoAmt: '✅ موافقة وإدخال المبلغ', reject: '❌ رفض' },
+    paysTitle: '💠 <b>تحويلات Binance Pay</b>\n{rule}\nاضغط لمراجعة التحويل.', paysNone: '💠 ما في تحويلات Binance بانتظار المراجعة.',
+    payRow: '{amount} · {name}', payRowTx: '{name} · TxID <code>{tx}</code>',
+    payTitle: '💠 <b>تحويل Binance Pay</b>\n{rule}\n👤 {name} · <code>{tg}</code>\n💵 المبلغ: <b>{amount}</b>\n🔢 TxID: <code>{tx}</code>\n📅 {date}\n\n<i>تحقّق من وصول التحويل بحسابك قبل الموافقة. إذا المبلغ "—" رح ينطلب منك إدخاله بعد الموافقة.</i>',
+    payBtn: { approve: '✅ موافقة · {amount}', approveAsk: '✅ موافقة وإدخال المبلغ', reject: '❌ رفض' },
+    payAskAmount: '💰 أرسل مبلغ الإيداع بالدولار لإضافته للزبون، مثال <code>20</code>',
+    payBadAmount: '❌ المبلغ غير صالح. أرسل رقماً أكبر من صفر، مثال <code>20</code>',
     payApproved: '✅ تم شحن {amount} للزبون.\nرصيده صار {balance}.', payAlready: 'ℹ️ هالدفعة انشحنت من قبل.\nرصيد الزبون: {balance}',
     payRejected: '❌ تم رفض الدفعة.', payCantReject: '⚠️ هالدفعة انشحنت من قبل — ما بينفع ترفضها.', payNotFound: 'الدفعة غير موجودة.',
-    payNew: '🅱️ <b>تحويل Binance Pay بانتظار المراجعة</b>\n{rule}\n👤 {name} · <code>{tg}</code>\n🔢 TxID: <code>{tx}</code>\n💰 المبلغ: غير محدد — بينُدخل عند الموافقة\n\nتحقّق من وصول التحويل بحسابك قبل الموافقة.',
-    payAmtUnknown: 'غير محدد — بينُدخل عند الموافقة',
-    payAmtAsk: '💰 <b>إدخال مبلغ التحويل</b>\n{rule}\n🔢 TxID: <code>{tx}</code>\n\nأرسل المبلغ الفعلي المستلم بالدولار (USD)، مثل <code>20</code>',
-    payAmtBad: '❌ أرسل مبلغًا صحيحًا أكبر من صفر، مثل 20',
+    payNew: '💠 <b>تحويل Binance Pay بانتظار المراجعة</b>\n{rule}\n👤 {name} · <code>{tg}</code>\n🔢 TxID: <code>{tx}</code>\n\nتحقّق من وصول التحويل بحسابك (Pay ← Binance ← سجل العمليات) ثم وافق وأدخل المبلغ.',
+
+    // معلومات الدفع
+    payInfoTitle: '💳 <b>معلومات الدفع</b>\n{rule}',
+    payInfoBinance: '💠 Binance Pay ID: <code>{id}</code>',
+    payInfoBinanceEmpty: '💠 Binance Pay ID: ⚠️ غير مضبوط',
+    payInfoCrypto: '⬛ العملات الرقمية (Cryptomus): {state}',
+    payInfoCryptoHint: '<i>تحتاج CRYPTOMUS_MERCHANT_ID و CRYPTOMUS_API_KEY و CRYPTOMUS_PAYMENT_KEY و WEBHOOK_URL بمتغيرات Render.</i>',
+    payInfoStars: '⭐️ Telegram Stars: 🟢 جاهز',
+    payInfoLimits: '💵 حدود الإيداع: {min} – {max} USD',
+    payInfoEdit: '✏️ تعديل معرّف Binance Pay',
+    payInfoSettings: '💳 إعدادات طرق الدفع',
 
     // المستخدمين
     findPrompt: '👤 ابعت معرّف تلغرام (رقم) أو @يوزر:', userNotFound: '❌ ما لقيت المستخدم.',
