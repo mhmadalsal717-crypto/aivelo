@@ -8,7 +8,7 @@ import { money } from '../lib/fmt.js';
 import { t } from '../i18n/index.js';
 import { depositLimits } from './service.js';
 
-/** Standard "enter amount" screen. Input is routed to gateway.onAmount(). */
+/** Standard "enter amount" screen — texts match the reference screenshots. */
 export async function askAmount(ctx, gw) {
   const { min, max } = depositLimits();
   await ask(ctx.from.id, 'pay_amount', { method: gw.id });
@@ -23,7 +23,7 @@ export async function askAmount(ctx, gw) {
 }
 
 export const cancelKb = (ctx) =>
-  kb().add({ text: t(ctx, 'btn.cancel'), data: to('topup'), style: 'danger' }).build();
+  kb().add({ text: t(ctx, 'btn.cancel'), data: to('pay_amount_cancel') }).build();
 
 export const backKb = (ctx) => kb().text(t(ctx, 'btn.back'), to('topup')).build();
 
