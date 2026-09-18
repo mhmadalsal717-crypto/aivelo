@@ -15,9 +15,9 @@ const count = (b) => q(b.select('id', { count: 'exact', head: true })).then((r) 
 adminScreen('admin', async (ctx) => {
   const [users, wd, stuck, bp, paused] = await Promise.all([
     count(db.from('users')),
-    count(db.from('withdrawals').eq('status', 'PENDING')),
-    count(db.from('orders').in('status', ['PENDING', 'NEEDS_REVIEW'])),
-    count(db.from('payments').eq('status', 'PENDING').not('external_id', 'is', null).in('method', ['BINANCE_PAY'])),
+    q(db.from('withdrawals').select('id', { count: 'exact', head: true }).eq('status', 'PENDING')).then((r) => r.count ?? 0),
+    q(db.from('orders').select('id', { count: 'exact', head: true }).in('status', ['PENDING', 'NEEDS_REVIEW'])).then((r) => r.count ?? 0),
+    q(db.from('payments').select('id', { count: 'exact', head: true }).eq('status', 'PENDING').not('external_id', 'is', null).in('method', ['BINANCE_PAY'])).then((r) => r.count ?? 0),
     q(db.from('products').select('slug', { count: 'exact', head: true }).eq('paused', true).is('deleted_at', null)).then((r) => r.count ?? 0),
   ]);
 
@@ -53,7 +53,7 @@ adminScreen('a_stats', async (ctx) => {
   const [orders, bal, newUsers] = await Promise.all([
     rows(db.from('orders').select('charged_usd, actual_cost_usd, created_at').eq('status', 'COMPLETED').gte('created_at', since30)),
     rows(db.from('users').select('balance')),
-    count(db.from('users').gte('created_at', since7)),
+    q(db.from('users').select('id', { count: 'exact', head: true }).gte('created_at', since7)).then((r) => r.count ?? 0),
   ]);
   const sum = (arr, f) => arr.reduce((a, r) => a + Number(f(r) || 0), 0);
   const rev = sum(orders, (r) => r.charged_usd), cost = sum(orders, (r) => r.actual_cost_usd);
