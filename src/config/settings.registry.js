@@ -42,6 +42,7 @@ export const SETTINGS = {
   // ---------- payments ----------
   pay_binance:            { def: 'on',    kind: 'bool',   grp: 'payments', ar: 'Binance Pay مفعّل',                    en: 'Binance Pay enabled' },
   pay_cryptomus:          { def: 'on',    kind: 'bool',   grp: 'payments', ar: 'Cryptomus مفعّل',                      en: 'Cryptomus enabled' },
+  pay_nowpayments:        { def: 'on',    kind: 'bool',   grp: 'payments', ar: 'NOWPayments مفعّل',                    en: 'NOWPayments enabled' },
   pay_stars:              { def: 'on',    kind: 'bool',   grp: 'payments', ar: 'Telegram Stars مفعّل',                 en: 'Telegram Stars enabled' },
   deposit_min:            { def: '1',     kind: 'number', grp: 'payments', ar: 'أقل مبلغ إيداع $',                     en: 'Min deposit $' },
   deposit_max:            { def: '10000', kind: 'number', grp: 'payments', ar: 'أقصى مبلغ إيداع $',                    en: 'Max deposit $' },
@@ -51,6 +52,7 @@ export const SETTINGS = {
   stars_max:              { def: '100000',kind: 'number', grp: 'payments', ar: 'أقصى عدد نجوم',                        en: 'Max stars' },
   binance_session_min:    { def: '30',    kind: 'number', grp: 'payments', ar: 'مهلة جلسة Binance (دقيقة)',            en: 'Binance session timeout (min)' },
   cryptomus_lifetime_min: { def: '60',    kind: 'number', grp: 'payments', ar: 'مهلة فاتورة Cryptomus (دقيقة)',        en: 'Cryptomus invoice lifetime (min)' },
+  nowpayments_lifetime_min: { def: '60', kind: 'number', grp: 'payments', ar: 'مهلة فاتورة NOWPayments (دقيقة)',       en: 'NOWPayments invoice lifetime (min)' },
   min_withdraw:           { def: '5',     kind: 'number', grp: 'payments', ar: 'أقل مبلغ سحب $',                       en: 'Min withdrawal $' },
 
   // ---------- appearance ----------
