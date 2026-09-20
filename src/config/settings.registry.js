@@ -51,6 +51,7 @@ export const SETTINGS = {
   stars_min:              { def: '50',    kind: 'number', grp: 'payments', ar: 'أقل عدد نجوم',                         en: 'Min stars' },
   stars_max:              { def: '100000',kind: 'number', grp: 'payments', ar: 'أقصى عدد نجوم',                        en: 'Max stars' },
   binance_session_min:    { def: '30',    kind: 'number', grp: 'payments', ar: 'مهلة جلسة Binance (دقيقة)',            en: 'Binance session timeout (min)' },
+  binance_verify_sec:     { def: '30',    kind: 'number', grp: 'payments', ar: 'فاصل التحقق الآلي من Binance (ثانية)', en: 'Binance auto-verify poll interval (sec)' },
   cryptomus_lifetime_min: { def: '60',    kind: 'number', grp: 'payments', ar: 'مهلة فاتورة Cryptomus (دقيقة)',        en: 'Cryptomus invoice lifetime (min)' },
   nowpayments_lifetime_min: { def: '60', kind: 'number', grp: 'payments', ar: 'مهلة فاتورة NOWPayments (دقيقة)',       en: 'NOWPayments invoice lifetime (min)' },
   min_withdraw:           { def: '5',     kind: 'number', grp: 'payments', ar: 'أقل مبلغ سحب $',                       en: 'Min withdrawal $' },
