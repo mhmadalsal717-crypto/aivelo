@@ -10,7 +10,7 @@
 //  Config: texts.binance_pay_id — set from Admin → Payment info.
 // ============================================================
 import { T, Snum, Sbool } from '../../lib/settings.js';
-import { RULE, esc, money } from '../../lib/fmt.js';
+import { RULE, esc, money, sleep } from '../../lib/fmt.js';
 import { t } from '../../i18n/index.js';
 import { db, one, rows } from '../../lib/db.js';
 import { kb } from '../../bot/ui/kb.js';
@@ -26,6 +26,38 @@ const log = logger('binance-pay-verify');
 
 const payId = () => T('binance_pay_id', 'ar', '').trim();
 const looksLikeTxId = (s) => /^[A-Za-z0-9_-]{8,80}$/.test(String(s || '').trim());
+
+let blocked = false; // true once we've confirmed Binance geo-blocks this server
+
+function reportBlocked() {
+  if (blocked) return; // log this once, not on every caller that hits it
+  blocked = true;
+  log.error('permanently disabled: Binance blocks this server\'s IP from api.binance.com '
+    + '(happens on every cloud host — Render, Railway, AWS, GCP — not fixable from here; '
+    + 'the personal-account API is not meant for server-to-server use from a datacenter IP). '
+    + 'Manual admin approval (already in place for every payment) is unaffected. '
+    + 'The only durable automatic option is Binance\'s separate Merchant Pay API '
+    + '(bpay.binanceapi.com, requires registering a Merchant account at merchant.binance.com) — '
+    + 'a different integration, not a config fix.');
+}
+
+/** One-shot check for a single TxID. Returns the matching transaction, or
+ *  null for "not found this attempt" — including when auto-verify isn't
+ *  configured, is already known to be blocked, or the request itself fails.
+ *  Never throws, so callers (the live countdown below, and the periodic
+ *  poll) can keep going safely either way. */
+async function fetchAndMatch(externalId) {
+  if (!(cfg.binance.apiKey && cfg.binance.secretKey) || blocked) return null;
+  try {
+    const res = await getPayTransactions({ startTime: Date.now() - 3 * 24 * 60 * 60 * 1000 });
+    const txs = res?.data || [];
+    return txs.find((tx) => tx.transactionId === externalId
+      && Number(tx.amount) > 0 && tx.currency === 'USDT') || null;
+  } catch (e) {
+    if (String(e.message || '').includes('restricted location')) reportBlocked();
+    return null;
+  }
+}
 
 const gw = {
   id: 'BINANCE_PAY',
@@ -65,15 +97,35 @@ const gw = {
 
     await setPayment(orderId, { external_id: txid, status: 'PENDING' });
 
+    // Live check — same feel as the reference bot: a short countdown while
+    // we look for the transfer, then either instant credit or a graceful
+    // "hasn't shown up yet" message. The admin is notified regardless
+    // (below), so the customer is never stuck if auto-verify can't confirm.
+    const seconds = 5;
+    const msg = await ctx.reply(t(ctx, 'pay.binance.checking', { seconds }));
+    for (let s = seconds - 1; s >= 0; s--) {
+      await sleep(1000);
+      const match = await fetchAndMatch(txid);
+      if (match) {
+        const r = await creditPayment(orderId, txid);
+        if (r.credited) {
+          await ctx.api.editMessageText(ctx.chat.id, msg.message_id,
+            t(ctx, 'pay.binance.approved', { amount: money(r.amount), balance: money(r.new_balance) }),
+            { parse_mode: 'HTML', reply_markup: creditedKb(ctx) }).catch(() => {});
+          notifyAdmin?.(t('ar', 'admin.alert.deposit', { method: 'Binance Pay (auto)', amount: money(r.amount), tg: ctx.from.id }));
+          return;
+        }
+      }
+      await ctx.api.editMessageText(ctx.chat.id, msg.message_id, t(ctx, 'pay.binance.checking', { seconds: s })).catch(() => {});
+    }
+    await ctx.api.editMessageText(ctx.chat.id, msg.message_id, t(ctx, 'pay.binance.notFoundYet')).catch(() => {});
+
     notifyAdmin?.(t('ar', 'admin.payNew', {
       name: esc(ctx.from.first_name || ''), tg: ctx.from.id, tx: esc(txid),
     }), kb()
       .add({ text: t('ar', 'admin.payBtn.approveAsk'), data: to('a_payok', orderId), style: 'success' }).row()
       .add({ text: t('ar', 'admin.payBtn.reject'), data: to('a_payno', orderId), style: 'danger' })
       .build());
-
-    return ctx.reply(t(ctx, 'pay.binance.received', { rule: RULE, tx: esc(txid) }),
-      { parse_mode: 'HTML' });
   },
 };
 
@@ -89,7 +141,7 @@ export default gw;
 //  keeps working exactly as before. Called from jobs/scheduler.js.
 // ============================================================
 export async function verifyPending({ bot, notifyAdmin }) {
-  if (!(cfg.binance.apiKey && cfg.binance.secretKey)) return;
+  if (!(cfg.binance.apiKey && cfg.binance.secretKey) || blocked) return;
 
   const pending = await rows(
     db.from('payments').select('*, users!inner(tg_id, lang)')
@@ -104,7 +156,8 @@ export async function verifyPending({ bot, notifyAdmin }) {
     const res = await getPayTransactions({ startTime: Date.now() - 3 * 24 * 60 * 60 * 1000 });
     txs = res?.data || [];
   } catch (e) {
-    log.error('poll failed', e);
+    if (String(e.message || '').includes('restricted location')) reportBlocked();
+    else log.error('poll failed', e);
     return;
   }
 
