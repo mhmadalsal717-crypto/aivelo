@@ -159,6 +159,8 @@ export default {
       instructions: '<b>Binance Pay</b>\n\n1) Open Pay → Binance → Send\n2) Send any amount of USDT to this Binance Pay ID\n3) Copy the transaction ID (TxID) from the receipt\n4) Paste the TxID here\n\n<b>Binance Pay ID</b>\n<code>{payId}</code>\n\nPaste the TxID now. Find it in Pay → Binance → Transaction log → open the transfer → copy the Transaction ID / Order ID.\n\nThis session expires in {minutes} minutes.',
       badTx: '❌ That does not look like a valid TxID. Paste it from your Binance receipt and try again.',
       dupTx: '❌ This transaction ID was already used.',
+      checking: '⏳ Checking your payment... 00:0{seconds}',
+      notFoundYet: '⏳ This transfer hasn\'t shown up in automatic verification yet.\nYour request has been sent to support and will be confirmed within minutes.\nIf you\'d like, double-check the TxID from your receipt and try pasting it again.',
       received: '✅ TxID received.\n{rule}\n🔢 <code>{tx}</code>\n\nWe will verify and credit your balance, usually within minutes.',
       approved: '✅ Your transfer was confirmed.\n💵 Added <b>{amount}</b>\n💰 Balance: <b>{balance}</b>',
       rejected: '❌ We could not verify your transfer. Contact support with your TxID.',
